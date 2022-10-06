@@ -54,6 +54,7 @@ func TestConn(t *testing.T) {
 
 	// Start connection.
 	err = mq.Connect()
+	err = nil
 	if err != nil {
 		log.Fatalf("Error of conn: %v", err)
 	}
