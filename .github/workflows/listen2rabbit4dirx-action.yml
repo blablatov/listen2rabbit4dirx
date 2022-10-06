@@ -22,8 +22,6 @@ steps:
           config: ${{ github.workspace }}/.ci/rabbitmq.conf
           definitions: ${{ github.workspace }}/.ci/definitions.json
           container-name: 'mqtt'
-  
-      - run: test
 
     steps:
     - uses: actions/checkout@v3
