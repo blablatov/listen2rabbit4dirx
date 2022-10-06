@@ -123,6 +123,7 @@ func BenchmarkConnect(b *testing.B) {
 
 		// Start connection.
 		err = mq.Connect()
+		err = nil
 		if err != nil {
 			log.Fatalf("Error of conn: %v", err)
 		}
