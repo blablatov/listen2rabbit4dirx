@@ -22,7 +22,7 @@ steps:
           config: ${{ github.workspace }}/.ci/rabbitmq.conf
           definitions: ${{ github.workspace }}/.ci/definitions.json
           container-name: 'mqtt'
-
+ - run: test
     - uses: actions/checkout@v3
 
     - name: Set up Go
