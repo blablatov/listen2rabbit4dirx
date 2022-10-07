@@ -1,15 +1,15 @@
 ### listen2rabbit
 ### Ru
 
-Демо пакеты go-модуля "прослушивателя" `listen2rabbit4dirx` данных в очереди RabbitMQ.   
+Демо пакеты go-модуля "прослушивателя" `listen2rabbit4dirx` каналов данных очереди RabbitMQ.   
 Если данные появились в нашей очереди, go-модулем `call2handler`, вызывается метод обработчика Directum RX, через сформированную гиперссылку `Hyperlink`.    
 Интеграционный метод обработчика, который выполняется при переходе по гиперссылке, должен существовать в Directum RX.  
 
-Для прослушивания сообщений, запустить модуль:    
+Для прослушивания сообщений в каналах, запустить модуль:    
  
 	listen2rabbit4dirx  
 
-Демо модуль для публикаций сообщений (`SAP_A, SAP_B, SAP_C`) в очереди:    
+Демо модуль для публикаций сообщений в каналах (`SAP_A, SAP_B, SAP_C`) очереди:    
  
 	publisher2listener SAP_A
 
@@ -22,7 +22,9 @@ graph TB
   SubGraph1Flow
   subgraph "RabbitMQ"
   SubGraph1Flow(Queue)
-  SubGraph1Flow -- Listen --> RoutingKey
+  SubGraph1Flow -- Listen --> Channel`SAP_A`
+  SubGraph1Flow -- Listen --> Channel`SAP_B`
+  SubGraph1Flow -- Listen --> Channel`SAP_C`
 
   end
  
@@ -42,14 +44,14 @@ end
 
 ### En
 
-Demo packages of module `listen2rabbit4dirx` it "listener" of RabbitMQ queue data.    
+Demo packages of module `listen2rabbit4dirx` it "listener" to channels of queue data  of RabbitMQ.     
 If data appeared in the our queue, the Directum RX method of handler is called the generated `Hyperlink`, via go module `call2handler`.   
 Handler method of integration, while executed when a hyperlink is followed must exist in Directum RX.       
 
-To listen messages, run the module:  
+To listenning messages in channels, run the module:  
  
 	listen2rabbit4dirx
 
-Demo module for publishing messages (`SAP_A, SAP_B, SAP_C`) to to a queue:  
+Demo module for publishing messages in channels (`SAP_A, SAP_B, SAP_C`) of a queue: 
  
 	publisher2listener SAP_A
