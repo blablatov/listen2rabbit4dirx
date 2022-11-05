@@ -1,3 +1,7 @@
+github.com/blablatov/tlsgorabbit v0.0.0-20221104163348-76ad305cc05b h1:tecYT7hw1jGo2CHRICeRcYA9nAIT3xkkSvu6h2QcyVk=
+github.com/blablatov/tlsgorabbit v0.0.0-20221104163348-76ad305cc05b/go.mod h1:4EUDWBirnFxAQavZMacLPPyQTwvfzv5yY6Y0b7seftg=
+github.com/blablatov/tlsgorabbit v0.0.0-20221104181138-d714e80a9ae0 h1:PHgMu1fLghPG758FRMuERnPzjqfmNgH3sUaf9vOoYNg=
+github.com/blablatov/tlsgorabbit v0.0.0-20221104181138-d714e80a9ae0/go.mod h1:4EUDWBirnFxAQavZMacLPPyQTwvfzv5yY6Y0b7seftg=
 github.com/pandeptwidyaop/gorabbit v1.0.0-alpha h1:uAys4Fj71uxZu1CnQu8WtQMz6s4jwqMMqYNT+Skzd5Q=
 github.com/pandeptwidyaop/gorabbit v1.0.0-alpha/go.mod h1:GxRnI4E5eAuVR9mlg6Bfu3YnKLnRKbHOpCVM+7PlEGQ=
 github.com/streadway/amqp v1.0.0 h1:kuuDrUJFZL1QYL9hUNuCxNObNzB0bV/ZG5jV3RWAQgo=

@@ -1,13 +1,14 @@
 // Demo publisher for data send to queue Rabbit.
 // Демо публикатор для отправки данных в очередь Rabbit.
+////+build linux
 package main
 
 import (
 	"encoding/json"
+	"gorabbit"
 	"log"
 	"os"
-
-	"github.com/pandeptwidyaop/gorabbit"
+	//"github.com/pandeptwidyaop/gorabbit"
 )
 
 type Message struct {
@@ -37,7 +38,13 @@ func main() {
 		}
 
 		// Start connection.
-		err = mq.Connect()
+		/*err = mq.Connect()
+		if err != nil {
+			log.Fatalf("Error of conn: %v", err)
+		}*/
+
+		// Start tls-connection.
+		err = mq.ConnectTLS()
 		if err != nil {
 			log.Fatalf("Error of conn: %v", err)
 		}

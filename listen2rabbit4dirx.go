@@ -1,21 +1,24 @@
 // Demo listener for data of queue Rabbit. If data is, it call method Directum RX via formed HyperLink.
 // Демо "прослушиватель" данных очереди Rabbit. Если данные появились, вызывается метод Directum RX через сформированную гиперссылку.
+
 package main
 
 import (
 	"log"
 
 	"github.com/blablatov/listen2rabbit4dirx/call2handler"
-	"github.com/pandeptwidyaop/gorabbit"
+	"github.com/blablatov/tlsgorabbit"
 	"github.com/streadway/amqp"
 )
 
 func main() {
 	// Create infinite chan for listen queue. Цикличный канал для прослушивания очереди.
 	forever := make(chan bool)
+	empty := make(chan int)
+	close(empty)
 
 	mq, err := gorabbit.New(
-		"amqp://guest:guest@localhost:5672/dirx",
+		"amqps://guest:guest@localhost:5671/dirx",
 		"QueueDirx",
 		"ExchangeDirx",
 	)
@@ -24,7 +27,13 @@ func main() {
 	}
 
 	// Start connection.
-	err = mq.Connect()
+	/*err = mq.Connect()
+	if err != nil {
+		log.Fatalf("Error of conn: %v", err)
+	}*/
+
+	// Start tls-connection.
+	err = mq.ConnectTLS()
 	if err != nil {
 		log.Fatalf("Error of conn: %v", err)
 	}
@@ -54,17 +63,17 @@ func handleConsume(mq gorabbit.RabbitMQ, queue string, deliveries <-chan amqp.De
 	for d := range deliveries {
 		switch d.RoutingKey {
 		case "SAP_A":
-			//log.Println("message come from SAP_A")
+			//log.Println("Message come from SAP_A")
 			log.Println("Сообщение пришло от SAP_A")
 		case "SAP_B":
-			//log.Println("message come from SAP_A")
+			//log.Println("Message come from SAP_A")
 			log.Println("Сообщение пришло от SAP_B")
 		case "SAP_C":
-			//log.Println("message come from SAP_A")
+			//log.Println("Message come from SAP_A")
 			log.Println("Сообщение пришло от SAP_C")
 		}
 		//log.Println("Call of method Directum RX via formed HyperLink")
-		log.Println("Вызов обработчика сообщений RabbitMQ из Directum RX, через сформированную гиперссылку.")
+		log.Println("Вызов обработчика сообщений RabbitMQ из Directum RX, \nчерез сформированную гиперссылку: `https://club.directum.ru/robots.txt`")
 		go call2handler.CallHadler()
 	}
 }
