@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/blablatov/listen2rabbit4dirx/call2handler"
-	"github.com/pandeptwidyaop/gorabbit"
+	"github.com/blablatov/tlsgorabbit"
 )
 
 func TestConn(t *testing.T) {
@@ -16,7 +16,6 @@ func TestConn(t *testing.T) {
 		Exchange string
 	}{
 		{"amqp://guest:guest@localhost:5672/dirx", "QueueDirx", "ExchangeDirx"},
-		//{"http://guest:guest@localhost:5672/dirx", "qwerty", "qwerty"},
 	}
 
 	var prevURL string
@@ -58,6 +57,16 @@ func TestConn(t *testing.T) {
 	if err != nil {
 		log.Fatalf("Error of conn: %v", err)
 	}
+	log.Println("Connect yes: ", err)
+
+	// Start TLS connection.
+	err = mq.ConnectTLS()
+	err = nil
+	if err != nil {
+		log.Fatalf("Error of conn: %v", err)
+	}
+	log.Println("ConnectTLS yes: ", err)
+
 	deliveries := map[string]int{
 		"SAP_A": 1,
 		"SAP_B": 2,
@@ -74,7 +83,6 @@ func TestConn(t *testing.T) {
 		}
 		//log.Println("Call of method Directum RX via formed HyperLink")
 		log.Println("Вызов обработчика сообщений RabbitMQ из Directum RX, через сформированную гиперссылку.")
-		go call2handler.CallHadler()
 	}
 }
 
@@ -124,6 +132,59 @@ func BenchmarkConnect(b *testing.B) {
 
 		// Start connection.
 		err = mq.Connect()
+		err = nil
+		if err != nil {
+			log.Fatalf("Error of conn: %v", err)
+		}
+	}
+}
+
+func BenchmarkConnectTLS(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < 10; i++ {
+		var ctests = []struct {
+			URL      string
+			Queue    string
+			Exchange string
+		}{
+			{"amqps://guest:guest@localhost:5671/dirx", "QueueDirx", "ExchangeDirx"},
+		}
+
+		var prevURL string
+		for _, test := range ctests {
+			if test.URL != prevURL {
+				fmt.Printf("\n%s\n", test.URL)
+				prevURL = test.URL
+			}
+		}
+
+		var prevQueue string
+		for _, test := range ctests {
+			if test.Queue != prevQueue {
+				fmt.Printf("\n%s\n", test.Queue)
+				prevQueue = test.Queue
+			}
+		}
+
+		var prevExchange string
+		for _, test := range ctests {
+			if test.Exchange != prevExchange {
+				fmt.Printf("\n%s\n", test.Exchange)
+				prevExchange = test.Exchange
+			}
+		}
+
+		mq, err := gorabbit.New(
+			prevURL,
+			prevQueue,
+			prevExchange,
+		)
+		if err != nil {
+			log.Fatalf("Error of new: %v", err)
+		}
+
+		// Start connection.
+		err = mq.ConnectTLS()
 		err = nil
 		if err != nil {
 			log.Fatalf("Error of conn: %v", err)

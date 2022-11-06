@@ -16,45 +16,75 @@ func main() {
 	forever := make(chan bool)
 	empty := make(chan int)
 	close(empty)
+	go func() {
+		mq, err := gorabbit.New(
+			"amqp://guest:guest@localhost:5672/dirx",
+			"QueueDirx",
+			"ExchangeDirx",
+		)
+		if err != nil {
+			log.Fatalf("Error of new: %v", err)
+		}
 
-	mq, err := gorabbit.New(
-		"amqps://guest:guest@localhost:5671/dirx",
-		"QueueDirx",
-		"ExchangeDirx",
-	)
-	if err != nil {
-		log.Fatalf("Error of new: %v", err)
-	}
+		// Start connection.
+		err = mq.Connect()
+		if err != nil {
+			log.Fatalf("Error of conn: %v", err)
+		}
 
-	// Start connection.
-	/*err = mq.Connect()
-	if err != nil {
-		log.Fatalf("Error of conn: %v", err)
-	}*/
+		// Binding all routing key. Привязка всех ключей маршрутизации.
+		err = mq.Bind([]string{"SAP_A", "SAP_B", "SAP_C"})
+		if err != nil {
+			log.Fatalf("Error of bind: %v", err)
+		}
 
-	// Start tls-connection.
-	err = mq.ConnectTLS()
-	if err != nil {
-		log.Fatalf("Error of conn: %v", err)
-	}
+		deliveries, err := mq.Consume()
+		if err != nil {
+			log.Fatalf("Error of consume: %v", err)
+		}
 
-	// Binding all routing key. Привязка всех ключей маршрутизации.
-	err = mq.Bind([]string{"SAP_A", "SAP_B", "SAP_C"})
-	if err != nil {
-		log.Fatalf("Error of bind: %v", err)
-	}
+		//log.Println("Waiting for messages")
+		log.Println("Ожидание сообщений")
 
-	deliveries, err := mq.Consume()
-	if err != nil {
-		log.Fatalf("Error of consume: %v", err)
-	}
+		for q, d := range deliveries {
+			go mq.HandleConsumedDeliveries(q, d, handleConsume)
+		}
+	}()
+	<-forever
+	go func() {
+		mqt, err := gorabbit.New(
+			"amqps://guest:guest@localhost:5671/dirx",
+			"QueueDirx",
+			"ExchangeDirx",
+		)
+		if err != nil {
+			log.Fatalf("Error of new: %v", err)
+		}
 
-	//log.Println("Waiting for messages")
-	log.Println("Ожидание сообщений")
+		// Start TLS connection.
+		err = mqt.ConnectTLS()
+		if err != nil {
+			log.Fatalf("Error of conn: %v", err)
+		}
 
-	for q, d := range deliveries {
-		go mq.HandleConsumedDeliveries(q, d, handleConsume)
-	}
+		// Binding all routing key. Привязка всех ключей маршрутизации.
+		err = mqt.Bind([]string{"SAP_A", "SAP_B", "SAP_C"})
+		if err != nil {
+			log.Fatalf("Error of bind: %v", err)
+		}
+
+		deliveries, err := mqt.Consume()
+		if err != nil {
+			log.Fatalf("Error of consume: %v", err)
+		}
+
+		//log.Println("Waiting for messages TLS")
+		log.Println("Ожидание сообщений TLS")
+
+		for q, d := range deliveries {
+			go mqt.HandleConsumedDeliveries(q, d, handleConsume)
+		}
+	}()
 	<-forever
 }
 

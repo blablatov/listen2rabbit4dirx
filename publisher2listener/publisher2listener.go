@@ -1,14 +1,14 @@
 // Demo publisher for data send to queue Rabbit.
 // Демо публикатор для отправки данных в очередь Rabbit.
-////+build linux
+
 package main
 
 import (
 	"encoding/json"
-	"gorabbit"
 	"log"
 	"os"
-	//"github.com/pandeptwidyaop/gorabbit"
+
+	"github.com/blablatov/tlsgorabbit"
 )
 
 type Message struct {
@@ -17,6 +17,7 @@ type Message struct {
 }
 
 func main() {
+	forever := make(chan bool)
 	for _, router := range os.Args[1:] {
 		m := Message{
 			Name:    "directum",
@@ -36,23 +37,31 @@ func main() {
 		if err != nil {
 			log.Fatalf("Error of new: %v", err)
 		}
-
-		// Start connection.
-		/*err = mq.Connect()
-		if err != nil {
-			log.Fatalf("Error of conn: %v", err)
-		}*/
-
-		// Start tls-connection.
-		err = mq.ConnectTLS()
-		if err != nil {
-			log.Fatalf("Error of conn: %v", err)
-		}
-
-		// Bublish data to event of queue. Опубликовать данные в событии очереди.
-		err = mq.Publish(router, "application/json", jsonMessage)
-		if err != nil {
-			log.Fatalf("Error of publish: %v", err)
-		}
+		go func() {
+			// Start connection.
+			err = mq.Connect()
+			if err != nil {
+				log.Fatalf("Error of conn: %v", err)
+			}
+			// Bublish data to event of queue. Опубликовать данные в событии очереди.
+			err = mq.Publish(router, "application/json", jsonMessage)
+			if err != nil {
+				log.Fatalf("Error of publish: %v", err)
+			}
+		}()
+		//<-forever
+		go func() {
+			// Start TLS connection.
+			err = mq.ConnectTLS()
+			if err != nil {
+				log.Fatalf("Error of conn: %v", err)
+			}
+			// Bublish data to event of queue. Опубликовать данные в событии очереди.
+			err = mq.Publish(router, "application/json", jsonMessage)
+			if err != nil {
+				log.Fatalf("Error of publish: %v", err)
+			}
+		}()
+		<-forever
 	}
 }
