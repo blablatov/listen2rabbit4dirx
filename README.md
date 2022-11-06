@@ -1,7 +1,7 @@
 ### listen2rabbit
 ### Ru
 
-Демо пакеты go-модуля "прослушивателя" `listen2rabbit4dirx` каналов данных очереди RabbitMQ.   
+Демо пакеты go-модуля "прослушивателя" `listen2rabbit4dirx` каналов данных очереди RabbitMQ. Поддерживает TLS.
 Если данные появились в нашей очереди, go-модулем `call2handler`, вызывается метод обработчика Directum RX, через сформированную гиперссылку `Hyperlink`.    
 Интеграционный метод обработчика, который выполняется при переходе по гиперссылке, должен существовать в Directum RX.  
 
@@ -44,7 +44,7 @@ end
 
 ### En
 
-Demo packages of module `listen2rabbit4dirx` it "listener" to channels of queue data  of RabbitMQ.     
+Demo packages of module `listen2rabbit4dirx` it "listener" to channels of queue data  of RabbitMQ. Supports TLS.     
 If data appeared in the our queue, the Directum RX method of handler is called the generated `Hyperlink`, via go module `call2handler`.   
 Handler method of integration, while executed when a hyperlink is followed must exist in Directum RX.       
 
