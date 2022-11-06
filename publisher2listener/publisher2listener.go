@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"sync"
 
 	"github.com/blablatov/tlsgorabbit"
 )
@@ -37,7 +38,10 @@ func main() {
 		if err != nil {
 			log.Fatalf("Error of new: %v", err)
 		}
+		var wg sync.WaitGroup
+		wg.Add(2)
 		go func() {
+			defer wg.Done()
 			// Start connection.
 			err = mq.Connect()
 			if err != nil {
@@ -51,6 +55,7 @@ func main() {
 		}()
 		//<-forever
 		go func() {
+			defer wg.Done()
 			// Start TLS connection.
 			err = mq.ConnectTLS()
 			if err != nil {
@@ -63,5 +68,9 @@ func main() {
 			}
 		}()
 		<-forever
+		go func() {
+			wg.Wait()
+			close(forever)
+		}()
 	}
 }

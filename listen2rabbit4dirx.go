@@ -5,6 +5,7 @@ package main
 
 import (
 	"log"
+	"sync"
 
 	"github.com/blablatov/listen2rabbit4dirx/call2handler"
 	"github.com/blablatov/tlsgorabbit"
@@ -16,7 +17,10 @@ func main() {
 	forever := make(chan bool)
 	empty := make(chan int)
 	close(empty)
+	var wg sync.WaitGroup
+	wg.Add(2)
 	go func() {
+		defer wg.Done()
 		mq, err := gorabbit.New(
 			"amqp://guest:guest@localhost:5672/dirx",
 			"QueueDirx",
@@ -52,6 +56,7 @@ func main() {
 	}()
 	<-forever
 	go func() {
+		defer wg.Done()
 		mqt, err := gorabbit.New(
 			"amqps://guest:guest@localhost:5671/dirx",
 			"QueueDirx",
@@ -86,6 +91,11 @@ func main() {
 		}
 	}()
 	<-forever
+	// Waits of counter. Ожидание счетчика.
+	go func() {
+		wg.Wait()
+		close(forever)
+	}()
 }
 
 // Handling messages of queue. Обработчик сообщений очереди.
